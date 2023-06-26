@@ -13,7 +13,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USER }}
           password: ${{ secrets.DOCKER_TOKEN }}
-
+          
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -24,3 +24,53 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USER }}/todolist:latest
+
+  deploy:
+    runs-on: ubuntu-22.04
+    needs: build_and_push
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Render configs
+        env:
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DB_NAME: ${{ secrets.POSTGRES_NAME }}
+          DB_USER: ${{ secrets.POSTGRES_USER}}
+          DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USER }}
+
+
+      - name: Copy files on server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          source: "deploy/*"
+          target: "todolist"
+          strip_components: 1
+
+      - name: Deploy app
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            cd todolist
+            docker-compose pull
+            docker-compose down
+            docker-compose up -d
+
+      - name: Cleanup
+        if: always()
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST}}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            docker system prune -f -a
+            
