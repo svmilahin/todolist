@@ -19,7 +19,7 @@ services:
 
 
   migrations:
-    image: %{DOCKERHUB_USER}/diploma_15:latest
+    image: ${DOCKERHUB_USER}/diploma_15:latest
     env_file:
       - .env
     environment:
@@ -30,7 +30,7 @@ services:
     command: python manage.py migrate
 
   api:
-    image: %{DOCKERHUB_USER}/todolist:latest
+    image: ${DOCKERHUB_USER}/todolist:latest
     env_file: .env
     depends_on:
       pg_db:
@@ -40,7 +40,7 @@ services:
 
 
   collect_static:
-    image: %{DOCKERHUB_USER}/todolist:latest
+    image: ${DOCKERHUB_USER}/todolist:latest
     env_file: .env
     command: python manage.py collectstatic -c --no-input
     volumes:
