@@ -6,12 +6,9 @@ volumes:
 
 services:
   pg_db:
-    image: postgres:15.1-alpine
+    image: postgres:15.1
     restart: always
-    environment:
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_DB=${POSTGRES_NAME}
+
     healthcheck:
       test: pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_NAME}
       interval: 5s
@@ -19,11 +16,10 @@ services:
       retries: 10
     volumes:
       - pg_project:/var/lib/postgresql/data
-    ports:
-      - ${POSTGRES_PORT:-5432}:5432
+
 
   migrations:
-    build: .
+    image: %{DOCKERHUB_USER}/diploma_15:latest
     env_file:
       - .env
     environment:
@@ -34,27 +30,18 @@ services:
     command: python manage.py migrate
 
   api:
-    build: .
-    env_file:
-      - .env
-    environment:
-      POSTGRES_HOST: pg_db
-      DEBUG: false
+    image: %{DOCKERHUB_USER}/diploma_15:latest
+    env_file: .env
     depends_on:
       pg_db:
         condition: service_healthy
       migrations:
         condition: service_completed_successfully
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./core:/app/core/
-      - ./config:/app/config/
+
 
   collect_static:
-    build: .
-    env_file:
-      - .env
+    image: %{DOCKERHUB_USER}/diploma_15:latest
+    env_file: .env
     command: python manage.py collectstatic -c --no-input
     volumes:
       - django_static:/app/static/
@@ -70,5 +57,5 @@ services:
       collect_static:
         condition: service_completed_successfully
     volumes:
-      - ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - django_static:/usr/share/nginx/html/static/
