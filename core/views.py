@@ -7,7 +7,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from .models import User
-from .serializes import RegistrationSerializer, UserSerializer, ChangePasswordSerializer
+from .serializers import RegistrationSerializer, UserSerializer, ChangePasswordSerializer
 
 
 class UserCreateView(CreateAPIView):

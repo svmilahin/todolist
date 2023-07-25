@@ -13,9 +13,9 @@ class CustomUser(UserAdmin):
     list_display = ('id', 'username', 'first_name', 'last_name', 'email')
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
-        ('Personal info', {'fields': ('first_name', 'last_name', 'email')}),
+        ('Персональная информация', {'fields': ('first_name', 'last_name', 'email')}),
         (
-            'Permissions',
+            'Разрешения',
             {
                 'fields': (
                     'is_active',
@@ -23,7 +23,7 @@ class CustomUser(UserAdmin):
                 ),
             },
         ),
-        ('Important dates', {'fields': ('last_login', 'date_joined')}),
+        ('Интересные даты', {'fields': ('last_login', 'date_joined')}),
     )
 
 
