@@ -1,4 +1,4 @@
-version: '3.9'
+version: "3.9"
 
 volumes:
   pg_project:
@@ -23,20 +23,18 @@ services:
       - ${POSTGRES_PORT:-5432}:5432
 
   migrations:
-    build: .
-    env_file:
-      - .env
+    image: ${DOCKERHUB_USER}/todolist:latest
+    env_file: .env
     environment:
       POSTGRES_HOST: pg_db
     depends_on:
       pg_db:
         condition: service_healthy
-    command: python manage.py migrate
+    command: python manage.py migrate --fake-initial   
 
   api:
     build: .
-    env_file:
-      - .env
+    env_file: .env
     environment:
       POSTGRES_HOST: pg_db
       DEBUG: false

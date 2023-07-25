@@ -23,14 +23,13 @@ services:
 
   migrations:
     image: ${DOCKERHUB_USER}/todolist:latest
-    env_file:
-      - .env
+    env_file: .env
     environment:
       POSTGRES_HOST: pg_db
     depends_on:
       pg_db:
         condition: service_healthy
-    command: python manage.py migrate
+    command: python manage.py migrate --fake-initial
 
   api:
     image: ${DOCKERHUB_USER}/todolist:latest
