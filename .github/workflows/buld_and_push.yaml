@@ -1,5 +1,5 @@
 name: Build and Deploy
-on: [ push ]
+on: [push]
 
 jobs:
   build_and_push:
@@ -34,7 +34,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-
       - name: Copy files on server
         uses: appleboy/scp-action@master
         with:
@@ -48,21 +47,21 @@ jobs:
       - name: Deploy app
         uses: appleboy/ssh-action@master
         with:
-            host: ${{ secrets.SSH_HOST }}
-            username: ${{ secrets.SSH_USERNAME }}
-            password: ${{ secrets.SSH_PASSWORD }}
-            script: |
-              cd todolist
-              docker-compose pull
-              docker-compose down
-              docker-compose up -d
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            cd todolist
+            docker-compose pull
+            docker-compose down
+            docker-compose up -d
 
       - name: Cleanup
         if: always()
         uses: appleboy/ssh-action@master
         with:
-            host: ${{ secrets.SSH_HOST}}
-            username: ${{ secrets.SSH_USERNAME }}
-            password: ${{ secrets.SSH_PASSWORD }}
-            script: |
-                  docker system prune -f -a
+          host: ${{ secrets.SSH_HOST}}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            docker system prune -f -a
