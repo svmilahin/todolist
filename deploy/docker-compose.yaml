@@ -22,7 +22,11 @@ services:
 
 
   migrations:
+<<<<<<< HEAD
     image: ${DOCKERHUB_USER}/todolist:latest
+=======
+    image: %{DOCKERHUB_USER}/todolist:latest
+>>>>>>> main
     env_file:
       - .env
     environment:
