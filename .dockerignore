@@ -2,6 +2,7 @@
 
 
 !core
+!goals
 !config
 !manage.py
 !requirements.txt
