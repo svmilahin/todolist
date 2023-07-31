@@ -6,7 +6,7 @@ volumes:
 
 services:
   pg_db:
-    image: postgres:15.1-alpine
+    image: postgres:14.8
     restart: always
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -52,7 +52,7 @@ services:
       - django_static:/app/static/
 
   frontend:
-    image: sermalenk/skypro-front:lesson-34
+    image: sermalenk/skypro-front:lesson-36
     restart: on-failure
     ports:
       - "80:80"
