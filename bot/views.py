@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from bot.models import TgUser
 from bot.serializers import VerificationSerializer
 from bot.tg.client import TgClient
-from todolist.settings import TG_TOKEN
+from config.settings import TOKEN_BOT
 
 
 class VerificationView(APIView):
@@ -31,7 +31,7 @@ class VerificationView(APIView):
                     'user_id': tg_user.user_id,
                 }
 
-                client = TgClient(TG_TOKEN)
+                client = TgClient(TOKEN_BOT)
                 client.send_message(chat_id=tg_user.tg_id,
                                     text='You are successfully verified!')
 
