@@ -11,6 +11,8 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'default_secret')
 
 DEBUG = bool(os.getenv('DEBUG', 0))
 
+TOKEN_BOT = os.getenv('TOKEN_BOT')
+
 ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
@@ -27,6 +29,7 @@ INSTALLED_APPS = [
 
     'core',
     'goals',
+    'bot',
 ]
 
 REST_FRAMEWORK = {
@@ -122,3 +125,28 @@ STATIC_ROOT = BASE_DIR / 'static'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'core.User'
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'console': {
+            'format': '%(asctime)s [%(levelname)s] %(message)s',
+            'date': '%y-%m-%d %H:%M:%S',
+        }
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'console',
+        },
+        'null': {'class': 'logging.NullHandler'},
+    },
+    'loggers': {
+        '': {
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'handlers': ['console'],
+        },
+    },
+}

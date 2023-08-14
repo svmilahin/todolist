@@ -1,9 +1,7 @@
-version: '3.9'
-
+version: "3.9"
 volumes:
   pg_project:
   django_static:
-
 services:
   pg_db:
     image: postgres:15.1
@@ -19,12 +17,17 @@ services:
       retries: 10
     volumes:
       - pg_project:/var/lib/postgresql/data
-
-
-  migrations:
-
+  bot:
     image: ${DOCKERHUB_USER}/todolist:latest
-
+    env_file: .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
+    command: python manage.py runbot
+  migrations:
+    image: ${DOCKERHUB_USER}/todolist:latest
     env_file:
       - .env
     environment:
@@ -33,7 +36,6 @@ services:
       pg_db:
         condition: service_healthy
     command: python manage.py migrate
-
   api:
     image: ${DOCKERHUB_USER}/todolist:latest
     env_file: .env
@@ -42,19 +44,14 @@ services:
         condition: service_healthy
       migrations:
         condition: service_completed_successfully
-
-
   collect_static:
     image: ${DOCKERHUB_USER}/todolist:latest
     env_file: .env
     command: python manage.py collectstatic -c --no-input
     volumes:
       - django_static:/app/static/
-
   frontend:
-
-    image: sermalenk/skypro-front:lesson-37
-
+    image: sermalenk/skypro-front:lesson-38
     restart: on-failure
     ports:
       - "80:80"

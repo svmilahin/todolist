@@ -1,9 +1,7 @@
-version: '3.9'
-
+version: "3.9"
 volumes:
   pg_project:
   django_static:
-
 services:
   pg_db:
     image: postgres:15.1-alpine
@@ -21,7 +19,17 @@ services:
       - pg_project:/var/lib/postgresql/data
     ports:
       - ${POSTGRES_PORT:-5432}:5432
-
+  bot:
+    build: .
+    env_file: .env
+    depends_on:
+      pg_db:
+        condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
+    volumes:
+      - ./bot:/app/bot/
+    command: python manage.py runbot
   migrations:
     build: .
     env_file:
@@ -32,14 +40,12 @@ services:
       pg_db:
         condition: service_healthy
     command: python manage.py migrate
-
   api:
     build: .
     env_file:
       - .env
     environment:
       POSTGRES_HOST: pg_db
-
     depends_on:
       pg_db:
         condition: service_healthy
@@ -51,7 +57,6 @@ services:
       - ./core:/app/core/
       - ./goals:/app/goals/
       - ./config:/app/config/
-
   collect_static:
     build: .
     env_file:
@@ -59,11 +64,8 @@ services:
     command: python manage.py collectstatic -c --no-input
     volumes:
       - django_static:/app/static/
-
   frontend:
-
     image: sermalenk/skypro-front:lesson-37
-
     restart: on-failure
     ports:
       - "80:80"
