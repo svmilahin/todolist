@@ -20,7 +20,7 @@ class TgClient:
     def __get_url(self, method: str):
         return f'{self.__url}{method}'
 
-    def get_updates(self, offset: int = 0, timeout: int = 10) -> GetUpdatesResponse:
+    def get_updates(self, offset: int = 0, timeout: int = 30) -> GetUpdatesResponse:
         url = self.__get_url('getUpdates')
         response = requests.get(url, params={
                                 'timeout': timeout, 'offset': offset, 'allowed_updates': ['message']})
